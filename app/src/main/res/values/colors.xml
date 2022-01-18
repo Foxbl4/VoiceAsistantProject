@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="windowHeader">#FF888888</color>
+    <color name="windowHeaderText">#FFFFFFFF</color>
+    <color name="windowHeaderClose">#FFEE7777</color>
+    <color name="windowBody">#FFDDDDDD</color>
+    <color name="windowSend">#FF448844</color>
+
 </resources>

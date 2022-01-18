@@ -3,9 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/HuaweiProject/app/src/main/res/drawable/ic_baseline_cancel_24.xml" value="0.2564814814814815" />
+        <entry key="..\:/HuaweiProject/app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.2564814814814815" />
         <entry key="..\:/HuaweiProject/app/src/main/res/layout/activity_assistant.xml" value="0.2" />
         <entry key="..\:/HuaweiProject/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/HuaweiProject/app/src/main/res/layout/assistant_item_layout.xml" value="0.25416666666666665" />
+        <entry key="..\:/HuaweiProject/app/src/main/res/layout/floating_layout.xml" value="0.2" />
+        <entry key="..\:/HuaweiProject/app/src/main/res/layout/over_main_activity.xml" value="0.152" />
       </map>
     </option>
   </component>

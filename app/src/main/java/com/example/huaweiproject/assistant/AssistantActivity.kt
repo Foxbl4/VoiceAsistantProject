@@ -2,11 +2,11 @@ package com.example.huaweiproject.assistant
 
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -23,6 +23,7 @@ import android.os.Environment
 import android.os.StrictMode
 import android.provider.ContactsContract
 import android.provider.MediaStore
+import android.provider.Settings
 import android.provider.Telephony
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -66,16 +67,29 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 import android.speech.tts.Voice
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.Button
+import android.widget.EditText
+import com.example.huaweiproject.Common
+import com.example.huaweiproject.FloatingWindowActivity
+import com.example.huaweiproject.WindowActivity
 
 class AssistantActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAssistantBinding
+    lateinit var binding: ActivityAssistantBinding
     private lateinit var assistantViewModel: AssistantViewModel
 
-    private lateinit var textToSpeech: TextToSpeech
-    private lateinit var speechRecognizer: SpeechRecognizer
-    private lateinit var recognizerIntent: Intent
+    lateinit var textToSpeech: TextToSpeech
+    lateinit var speechRecognizer: SpeechRecognizer
+    lateinit var recognizerIntent: Intent
     private lateinit var keeper: String
+    //lateinit var context: WindowActivity
+
+    /**Тестим FloatWindows*/
+    private lateinit var dialog: AlertDialog
+    private lateinit var btnMin: Button
+    /**Конец теста FloatWindows*/
 
     private var REQUESTCALL = 1
     private var SENDSMS = 2
@@ -287,7 +301,65 @@ class AssistantActivity : AppCompatActivity() {
             false
         }
         checkIfSpeechRecognizerAvailable()
+
+        //context = WindowActivity(this)
+        /*
+        /**Тестим FloatWindows*/
+        btnMin = findViewById(R.id.content_button)
+
+        if(isServiceRunning()){
+            stopService(Intent(this@AssistantActivity, FloatingWindowActivity::class.java))
+        }
+
+
+        btnMin.setOnClickListener{
+            if(checkOverlayPermission()){
+                startService(Intent(this@AssistantActivity, FloatingWindowActivity::class.java))
+                finish()
+            }else{
+                requestFloatingWindowPermission()
+            }
+        }
+        /**Конец теста FloatWindows*/
+        */
     }
+
+    /**Тестим FloatWindows*/
+
+    private fun isServiceRunning(): Boolean{
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)){
+            if (FloatingWindowActivity::class.java.name == service.service.className){
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun requestFloatingWindowPermission(){
+        val builder = AlertDialog.Builder(this)
+        builder.setCancelable(true)
+        builder.setTitle("Screen Overlay Permission Needed")
+        builder.setMessage("Enable 'Display over the App' from settings")
+        builder.setPositiveButton("Open Settings", DialogInterface.OnClickListener{ dialog, which ->
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package: $packageName"))
+            startActivityForResult(intent, RESULT_OK)
+        })
+        dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun checkOverlayPermission(): Boolean{
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+            Settings.canDrawOverlays(this)
+        }else{
+            return true
+        }
+    }
+
+    /**Конец теста FloatWindows*/
 
 
     private fun checkIfSpeechRecognizerAvailable() {
@@ -424,6 +496,16 @@ class AssistantActivity : AppCompatActivity() {
 
     private fun openPowerPoint() {
         speak("Открываю приложение PowerPoint")
+        //context.open()
+        if(isServiceRunning()){
+            stopService(Intent(this@AssistantActivity, FloatingWindowActivity::class.java))
+        }
+            if(checkOverlayPermission()){
+                startService(Intent(this@AssistantActivity, FloatingWindowActivity::class.java))
+            }else{
+                requestFloatingWindowPermission()
+            }
+
         val intent = packageManager.getLaunchIntentForPackage("com.microsoft.office.powerpoint")
         intent?.let { startActivity(it) }
     }
