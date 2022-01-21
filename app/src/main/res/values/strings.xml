@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">HuaweiProject</string>
-    <string name="first_message">Здравствуйте. Меня зовут Коннор. Чем я могу вам помочь?</string>
-    <string name="second_message">Для этого просто спроси меня!</string>
-    <string name="OPEN_WEATHER_API_KEY">379cf5db7b5062d3443fb13563480943</string>
-    <string name="main_txt">This is a test prototype of a voice assistant for Huawei.
-    Tap on button below to start.</string>
-</resources>
