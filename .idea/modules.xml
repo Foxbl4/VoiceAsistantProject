@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/My-PPT-Presentation-master.iml" filepath="$PROJECT_DIR$/.idea/modules/My-PPT-Presentation-master.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/My-PPT-Presentation-master.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/My-PPT-Presentation-master.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HuaweiProject.iml" filepath="$PROJECT_DIR$/.idea/modules/HuaweiProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HuaweiProject.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HuaweiProject.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/text2summary/HuaweiProject.text2summary.iml" filepath="$PROJECT_DIR$/.idea/modules/text2summary/HuaweiProject.text2summary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/weathermap/HuaweiProject.weathermap.iml" filepath="$PROJECT_DIR$/.idea/modules/weathermap/HuaweiProject.weathermap.iml" />
     </modules>
   </component>
 </project>
