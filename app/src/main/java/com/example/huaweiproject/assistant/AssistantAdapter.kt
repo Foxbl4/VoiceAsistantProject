@@ -20,8 +20,8 @@ class AssistantAdapter: RecyclerView.Adapter<AssistantAdapter.ViewHolder>() {
     }
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val assistantMessage: TextView = itemView.findViewById(R.id.assistant_message)
-        val humanMessage : TextView = itemView.findViewById(R.id.human_message)
+        val assistantMessage: TextView = itemView.findViewById(R.id.human_message)
+        val humanMessage : TextView = itemView.findViewById(R.id.assistant_message)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

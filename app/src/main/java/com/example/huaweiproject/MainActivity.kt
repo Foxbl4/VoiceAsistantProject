@@ -1,10 +1,6 @@
 package com.example.huaweiproject
 
 import android.Manifest
-import android.app.ActivityManager
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -15,14 +11,6 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.huaweiproject.assistant.AssistantActivity
-import android.net.Uri
-import android.provider.Settings
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.*
-import android.widget.Button
-import android.widget.EditText
-import com.example.huaweiproject.Common.Companion.currDes
 
 
 class MainActivity : AppCompatActivity() {
@@ -49,8 +37,8 @@ class MainActivity : AppCompatActivity() {
         }
         imageActionButton.setOnClickListener{
             startActivity(Intent(this, AssistantActivity::class.java))
-
         }
+
 /*
         /**Тестим FloatWindows*/
         btnMin = findViewById(R.id.send_btn)

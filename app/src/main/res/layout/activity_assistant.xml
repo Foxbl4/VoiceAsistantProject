@@ -14,8 +14,8 @@
         android:id="@+id/assistant_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorOnPrimary"
-        tools:context =".MainActivity">
+        tools:context =".assistant.AssistantActivity"
+        android:background="@color/assistant_main">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
@@ -32,11 +32,10 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/mic"
+                android:src="@drawable/ic_baseline_mic_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"/>
+                app:layout_constraintStart_toStartOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

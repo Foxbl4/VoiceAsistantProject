@@ -1,4 +1,4 @@
-package com.example.huaweiproject
+package com.example.huaweiproject.float_activity
 
 import android.annotation.SuppressLint
 import android.app.Service
@@ -6,15 +6,10 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
-import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageButton
-import com.example.huaweiproject.Common.Companion.currDes
+import com.example.huaweiproject.R
 import com.example.huaweiproject.assistant.AssistantActivity
-import java.security.Provider
 
 class FloatingWindowActivity: Service() {
 

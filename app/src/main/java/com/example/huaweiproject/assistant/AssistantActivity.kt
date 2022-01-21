@@ -43,7 +43,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.huaweiproject.R
 import com.example.huaweiproject.data.AssistantDB
-import com.example.huaweiproject.databinding.ActivityAssistantBinding
 import com.example.weathermap.constant.Units
 import com.example.weathermap.implementation.OpenWeatherMapHelper
 import com.example.weathermap.implementation.callback.CurrentWeatherCallback
@@ -66,18 +65,12 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
-import android.speech.tts.Voice
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.Button
-import android.widget.EditText
-import com.example.huaweiproject.Common
-import com.example.huaweiproject.FloatingWindowActivity
-import com.example.huaweiproject.WindowActivity
+import com.example.huaweiproject.float_activity.FloatingWindowActivity
 
 class AssistantActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityAssistantBinding
+    lateinit var binding: com.example.huaweiproject.databinding.ActivityAssistantBinding
     private lateinit var assistantViewModel: AssistantViewModel
 
     lateinit var textToSpeech: TextToSpeech
@@ -222,7 +215,8 @@ class AssistantActivity : AppCompatActivity() {
             }
 
             override fun onError(p0: Int) {
-                TODO("Not yet implemented")
+                binding.assistantActionButton.setImageResource(R.drawable.ic_baseline_mic_24)
+                Toast.makeText(this@AssistantActivity, "Что-то пошло не так. Попробуйте снова!", Toast.LENGTH_SHORT).show()
             }
 
             override fun onResults(bundle: Bundle?) {
@@ -294,6 +288,7 @@ class AssistantActivity : AppCompatActivity() {
                 }
 
                 MotionEvent.ACTION_DOWN -> {
+                    binding.assistantActionButton.setImageResource(R.drawable.ic_baseline_mic_24_2)
                     textToSpeech.stop()
                     speechRecognizer.startListening(recognizerIntent)
                 }
@@ -374,8 +369,6 @@ class AssistantActivity : AppCompatActivity() {
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
         assistantViewModel.sendMessageToDataBase(keeper, text)
     }
-
-
 
     fun sumNum(keeper: String){
         val firstNum: Int = keeper.substringBefore(" +").toInt()
@@ -495,7 +488,7 @@ class AssistantActivity : AppCompatActivity() {
     }
 
     private fun openPowerPoint() {
-        speak("Открываю приложение PowerPoint")
+        speak("Открываю приложение Google Slides")
         //context.open()
         if(isServiceRunning()){
             stopService(Intent(this@AssistantActivity, FloatingWindowActivity::class.java))
@@ -506,7 +499,7 @@ class AssistantActivity : AppCompatActivity() {
                 requestFloatingWindowPermission()
             }
 
-        val intent = packageManager.getLaunchIntentForPackage("com.microsoft.office.powerpoint")
+        val intent = packageManager.getLaunchIntentForPackage("com.google.android.apps.docs.editors.slides")
         intent?.let { startActivity(it) }
     }
 
@@ -977,7 +970,6 @@ class AssistantActivity : AppCompatActivity() {
 
             circularReveal.addListener(object : Animator.AnimatorListener{
                 override fun onAnimationStart(animation: Animator?) {
-                    TODO("Not yet implemented")
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {

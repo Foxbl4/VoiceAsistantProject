@@ -1,4 +1,4 @@
-package com.example.huaweiproject
+package com.example.huaweiproject.float_activity
 
 class Common {
 

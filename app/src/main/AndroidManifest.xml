@@ -43,7 +43,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HuaweiProject"
+        android:theme="@style/Theme.MaterialComponents.NoActionBar"
         android:fullBackupContent="true">
         <activity
             android:name=".assistant.AssistantActivity"
@@ -58,7 +58,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".FloatingWindowActivity"
+        <service android:name=".float_activity.FloatingWindowActivity"
             tools:ignore="Instantiatable" />
 
     </application>
