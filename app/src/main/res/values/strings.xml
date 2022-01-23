@@ -5,4 +5,5 @@
     <string name="OPEN_WEATHER_API_KEY">379cf5db7b5062d3443fb13563480943</string>
     <string name="main_txt">This is a test prototype of a voice assistant for Huawei.
     Tap on button below to start.</string>
+    <string name="voice_assistant_float">IVA</string>
 </resources>

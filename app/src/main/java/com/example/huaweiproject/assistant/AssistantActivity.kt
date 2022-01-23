@@ -66,6 +66,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 import android.widget.Button
+import com.example.huaweiproject.float_activity.Common.Companion.currDes
 import com.example.huaweiproject.float_activity.FloatingWindowActivity
 
 class AssistantActivity : AppCompatActivity() {
@@ -139,6 +140,12 @@ class AssistantActivity : AppCompatActivity() {
                 adapter.data = it
             }
         })
+        if(currDes!=null && currDes!=""){
+            assistantViewModel.sendMessageToDataBase("[From float service] ${currDes!!.substringBefore("\n")}",
+                "[From float service] ${currDes!!.substringAfter("\n")}")
+        }
+
+
         binding.lifecycleOwner = this
         //animation
         if (savedInstanceState == null) {
@@ -211,6 +218,7 @@ class AssistantActivity : AppCompatActivity() {
             }
 
             override fun onEndOfSpeech() {
+                binding.assistantActionButton.setImageResource(R.drawable.ic_baseline_mic_24)
                 Log.d("SR", "ended")
             }
 
@@ -239,7 +247,7 @@ class AssistantActivity : AppCompatActivity() {
                         keeper.contains("открой почту") -> openGmail()
                         keeper.contains("открой messenger") -> openWhatsApp()
                         keeper.contains("открой сообщения") -> openMessages()
-                        keeper.contains("открой презентацию") -> openPowerPoint()
+                        keeper.contains("открой презентацию") -> openPresentationApp()
                         /** Звонки и СМС**/
                         keeper.contains("позвони контакту") -> callContact()
                         keeper.contains("позвони на номер") -> makePhoneCall()
@@ -296,7 +304,6 @@ class AssistantActivity : AppCompatActivity() {
             false
         }
         checkIfSpeechRecognizerAvailable()
-
         //context = WindowActivity(this)
         /*
         /**Тестим FloatWindows*/
@@ -472,23 +479,26 @@ class AssistantActivity : AppCompatActivity() {
     }
 
     private fun openMessages() {
+        speak("Открываю список ваших SMS")
         val intent =
             packageManager.getLaunchIntentForPackage(Telephony.Sms.getDefaultSmsPackage(this))
         intent?.let { startActivity(it) }
     }
 
     private fun openWhatsApp() {
+        speak("Открываю приложение What's Up")
         val intent = packageManager.getLaunchIntentForPackage("com.whatsapp")
         intent?.let { startActivity(intent) }
     }
 
     private fun openGmail() {
+        speak("Открываю приложение Google Mail")
         val intent = packageManager.getLaunchIntentForPackage("com.google.android.gm")
         intent?.let { startActivity(it) }
     }
 
-    private fun openPowerPoint() {
-        speak("Открываю приложение Google Slides")
+    private fun openPresentationApp() {
+        speak("Открываю приложение для визуализации презентаций")
         //context.open()
         if(isServiceRunning()){
             stopService(Intent(this@AssistantActivity, FloatingWindowActivity::class.java))
@@ -499,7 +509,7 @@ class AssistantActivity : AppCompatActivity() {
                 requestFloatingWindowPermission()
             }
 
-        val intent = packageManager.getLaunchIntentForPackage("com.google.android.apps.docs.editors.slides")
+        val intent = packageManager.getLaunchIntentForPackage("com.example.test")
         intent?.let { startActivity(it) }
     }
 
@@ -805,7 +815,7 @@ class AssistantActivity : AppCompatActivity() {
         helper.setUnits(Units.METRIC)
         val keeperSplit = keeper.replace(" ".toRegex(), "|").split("|")
             .toTypedArray()
-        val city = keeperSplit[1]
+        val city = keeperSplit[keeperSplit.size-1]
         helper.getCurrentWeatherByCityName(city, object : CurrentWeatherCallback {
             override fun onSuccess(currentWeather: CurrentWeather?) {
                 if (currentWeather != null) {

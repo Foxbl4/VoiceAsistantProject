@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/windowHeader">
+        android:background="@color/assistant_main">
         <TextView
             android:id="@+id/window_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Voice Assistant"
-            android:textColor="@color/windowHeaderText"
+            android:text="@string/voice_assistant_float"
+            android:textColor="@color/almoustWihite"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -25,6 +25,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:textStyle="bold"
+            android:gravity="center"
             android:textAllCaps="true"/>
 
         <ImageButton
@@ -45,9 +46,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/windowBody">
+        android:background="@color/recycler_main">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/content_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +58,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:tint="@color/windowHeaderClose" />
