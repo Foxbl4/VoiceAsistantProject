@@ -54,7 +54,7 @@ import com.google.mlkit.nl.translate.TranslatorOptions
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.ml.quaterion.text2summary.Text2Summary
+import com.example.text2summary.Text2Summary
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.File
@@ -73,28 +73,10 @@ class AssistantActivity : AppCompatActivity() {
 
     lateinit var binding: com.example.huaweiproject.databinding.ActivityAssistantBinding
     private lateinit var assistantViewModel: AssistantViewModel
-
     lateinit var textToSpeech: TextToSpeech
     lateinit var speechRecognizer: SpeechRecognizer
     lateinit var recognizerIntent: Intent
     private lateinit var keeper: String
-    //lateinit var context: WindowActivity
-
-    /**Тестим FloatWindows*/
-    private lateinit var dialog: AlertDialog
-    private lateinit var btnMin: Button
-    /**Конец теста FloatWindows*/
-
-    private var REQUESTCALL = 1
-    private var SENDSMS = 2
-    private var READSMS = 3
-    private var SHAREFILE = 4
-    private var SHARETEXTFILE = 5
-    private var READCONTACT = 6
-    private var CAPTUREPHOTO = 7
-
-    private var REQUEST_CODE_SELECT_DOC: Int = 100
-    private var REQUEST_ENABLE_BT = 1000
 
     private var bluetoothAdapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
     private lateinit var cameraManager: CameraManager
@@ -102,15 +84,11 @@ class AssistantActivity : AppCompatActivity() {
     private lateinit var cameraID: String
     private lateinit var ringtone: Ringtone
 
-    private val logtts = "TTS"
-    private val logsr = "SR"
-    private val logkeeper = "keeper"
-
     private var imageIndex: Int = 0
     private lateinit var imgUri: Uri
     private lateinit var helper: OpenWeatherMapHelper
     private lateinit var englishRussianTranslator: com.google.mlkit.nl.translate.Translator
-
+    private lateinit var dialog: AlertDialog
 
     @Suppress("DEPRECATION")
     private val imageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
@@ -140,11 +118,11 @@ class AssistantActivity : AppCompatActivity() {
                 adapter.data = it
             }
         })
+
         if(currDes!=null && currDes!=""){
             assistantViewModel.sendMessageToDataBase("[From float service] ${currDes!!.substringBefore("\n")}",
                 "[From float service] ${currDes!!.substringAfter("\n")}")
         }
-
 
         binding.lifecycleOwner = this
         //animation
@@ -163,6 +141,7 @@ class AssistantActivity : AppCompatActivity() {
                 })
             }
         }
+
         cameraManager = getSystemService(CAMERA_SERVICE) as CameraManager
         try {
             cameraID = cameraManager.cameraIdList[0]
@@ -173,10 +152,10 @@ class AssistantActivity : AppCompatActivity() {
         }
 
         clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        ringtone = RingtoneManager.getRingtone(
-            applicationContext,
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-        )
+
+        ringtone = RingtoneManager.getRingtone(applicationContext,
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE))
+
         helper = OpenWeatherMapHelper(getString(R.string.OPEN_WEATHER_API_KEY))
 
         textToSpeech = TextToSpeech(this) { status ->
@@ -186,21 +165,20 @@ class AssistantActivity : AppCompatActivity() {
                 if (result == TextToSpeech.LANG_MISSING_DATA ||
                     result == TextToSpeech.LANG_NOT_SUPPORTED
                 ) {
-                    Log.e(logtts, "Language not supported")
+                    Log.e(Companion.logtts, "Language not supported")
                 } else {
-                    Log.e(logtts, "Language supported")
+                    Log.e(Companion.logtts, "Language supported")
                 }
             } else {
-                Log.e(logtts, "Initialization failed")
+                Log.e(Companion.logtts, "Initialization failed")
             }
         }
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+
         recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        recognizerIntent.putExtra(
-            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-        )
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
             override fun onReadyForSpeech(p0: Bundle?) {
@@ -231,7 +209,7 @@ class AssistantActivity : AppCompatActivity() {
                 val data = bundle?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (data != null) {
                     keeper = data[0].lowercase(Locale.getDefault())
-                    Log.d(logkeeper, keeper)
+                    Log.d(Companion.logkeeper, keeper)
                     when {
                         /** Общение **/
                         keeper.contains("спасибо") -> speak("Это моя работа! Дай знать, если тебе понадобится что-то ещё")
@@ -240,14 +218,15 @@ class AssistantActivity : AppCompatActivity() {
                         /** Маленькие задачки **/
                         keeper.contains("дата") -> getDate()
                         keeper.contains("время") -> getTime()
-                        keeper.contains("расскажи шутку") -> joke()
-                        keeper.contains("очистить") -> assistantViewModel.onClear()
+                        keeper.contains("шутку") -> joke()
+                        keeper.contains("удали") -> assistantViewModel.onClear()
                         keeper.contains("погода") -> weather()
                         /** Открытие приложений **/
                         keeper.contains("открой почту") -> openGmail()
                         keeper.contains("открой messenger") -> openWhatsApp()
-                        keeper.contains("открой сообщения") -> openMessages()
+                        keeper.contains("открой sms") -> openMessages()
                         keeper.contains("открой презентацию") -> openPresentationApp()
+                        keeper.contains("найти файл") -> shareFile()
                         /** Звонки и СМС**/
                         keeper.contains("позвони контакту") -> callContact()
                         keeper.contains("позвони на номер") -> makePhoneCall()
@@ -271,10 +250,8 @@ class AssistantActivity : AppCompatActivity() {
                         /**Не сохраняет*/keeper.contains("фото") -> capturePhoto()
                         /**Пуст*/keeper.contains("сигнал") -> setAlarm()
                         /**Пуст*/keeper.contains("question") -> question()
-                        /**Не проверил*/keeper.contains("share a file") -> shareFile()
                         /**Пуст*/keeper.contains("medical") -> medicalApplication()
-
-                        else -> speak("Invalid command, try again")
+                        else -> speak("Неверная команда, попробуйте снова")
                     }
                 }
             }
@@ -294,7 +271,6 @@ class AssistantActivity : AppCompatActivity() {
                 MotionEvent.ACTION_UP -> {
                     speechRecognizer.stopListening()
                 }
-
                 MotionEvent.ACTION_DOWN -> {
                     binding.assistantActionButton.setImageResource(R.drawable.ic_baseline_mic_24_2)
                     textToSpeech.stop()
@@ -304,29 +280,7 @@ class AssistantActivity : AppCompatActivity() {
             false
         }
         checkIfSpeechRecognizerAvailable()
-        //context = WindowActivity(this)
-        /*
-        /**Тестим FloatWindows*/
-        btnMin = findViewById(R.id.content_button)
-
-        if(isServiceRunning()){
-            stopService(Intent(this@AssistantActivity, FloatingWindowActivity::class.java))
-        }
-
-
-        btnMin.setOnClickListener{
-            if(checkOverlayPermission()){
-                startService(Intent(this@AssistantActivity, FloatingWindowActivity::class.java))
-                finish()
-            }else{
-                requestFloatingWindowPermission()
-            }
-        }
-        /**Конец теста FloatWindows*/
-        */
     }
-
-    /**Тестим FloatWindows*/
 
     private fun isServiceRunning(): Boolean{
         val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -361,14 +315,11 @@ class AssistantActivity : AppCompatActivity() {
         }
     }
 
-    /**Конец теста FloatWindows*/
-
-
     private fun checkIfSpeechRecognizerAvailable() {
         if (SpeechRecognizer.isRecognitionAvailable(this)) {
-            Log.d(logsr, "yes")
+            Log.d(Companion.logsr, "yes")
         } else {
-            Log.d(logsr, "false")
+            Log.d(Companion.logsr, "false")
         }
     }
 
@@ -396,7 +347,7 @@ class AssistantActivity : AppCompatActivity() {
         val formattedDate = DateFormat.getDateInstance(DateFormat.FULL).format(calendar.time)
         val splitDate = formattedDate.split(",").toTypedArray()
         val date = splitDate[1].trim { it <= ' ' }
-        speak("The date is $date")
+        speak("Сегодня $date")
     }
 
     fun getTime() {
@@ -419,7 +370,7 @@ class AssistantActivity : AppCompatActivity() {
                     this, arrayOf(
                         android.Manifest
                             .permission.CALL_PHONE
-                    ), REQUESTCALL
+                    ), Companion.REQUESTCALL
                 )
             } else {
                 val dial = "tel:$keeperSplit"
@@ -442,7 +393,7 @@ class AssistantActivity : AppCompatActivity() {
                 this, arrayOf(
                     android.Manifest.permission
                         .SEND_SMS
-                ), SENDSMS
+                ), Companion.SENDSMS
             )
             Log.d("keeper", "Done1")
         } else {
@@ -466,7 +417,7 @@ class AssistantActivity : AppCompatActivity() {
         ) {
             ActivityCompat.requestPermissions(
                 this, arrayOf(android.Manifest.permission.READ_SMS),
-                READSMS
+                Companion.READSMS
             )
         } else {
             val cursor = contentResolver.query(
@@ -524,14 +475,14 @@ class AssistantActivity : AppCompatActivity() {
                 this, arrayOf(
                     android.Manifest.permission
                         .READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ), SHAREFILE
+                ), Companion.SHAREFILE
             )
         } else {
             val builder = StrictMode.VmPolicy.Builder()
             StrictMode.setVmPolicy(builder.build())
             val myFileIntent = Intent(Intent.ACTION_GET_CONTENT)
-            myFileIntent.type = "application/pdf"
-            startActivityForResult(myFileIntent, REQUEST_CODE_SELECT_DOC)
+            myFileIntent.type = "application/*"
+            startActivityForResult(myFileIntent, Companion.REQUEST_CODE_SELECT_DOC)
         }
     }
 
@@ -545,7 +496,7 @@ class AssistantActivity : AppCompatActivity() {
                 this, arrayOf(
                     android.Manifest
                         .permission.WRITE_EXTERNAL_STORAGE
-                ), SHARETEXTFILE
+                ), Companion.SHARETEXTFILE
             )
         } else {
             val builder = StrictMode.VmPolicy.Builder()
@@ -558,8 +509,6 @@ class AssistantActivity : AppCompatActivity() {
         }
     }
 
-
-
     @SuppressLint("Recycle")
     private fun callContact() {
         if (ContextCompat.checkSelfPermission(
@@ -571,7 +520,7 @@ class AssistantActivity : AppCompatActivity() {
                 this, arrayOf(
                     android.Manifest
                         .permission.READ_CONTACTS
-                ), READCONTACT
+                ), Companion.READCONTACT
             )
         } else {
             val nameTemp = keeper.substringAfter("контакту").trim { it <= ' ' }
@@ -604,7 +553,7 @@ class AssistantActivity : AppCompatActivity() {
                             this, arrayOf(
                                 android.Manifest
                                     .permission.CALL_PHONE
-                            ), REQUESTCALL
+                            ), Companion.REQUESTCALL
                         )
                     } else {
                         val dial = "tel:$number"
@@ -619,13 +568,11 @@ class AssistantActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun turnOnBluetooth() {
         if (!bluetoothAdapter.isEnabled) {
             speak("Turning On Bluetooth")
             val intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(intent, REQUEST_ENABLE_BT)
+            startActivityForResult(intent, Companion.REQUEST_ENABLE_BT)
         } else {
             speak("Bluetooth is already On")
         }
@@ -708,7 +655,7 @@ class AssistantActivity : AppCompatActivity() {
                     android.Manifest
                         .permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE
                 ),
-                CAPTUREPHOTO
+                Companion.CAPTUREPHOTO
             )
         } else {
             val builder = StrictMode.VmPolicy.Builder()
@@ -737,10 +684,6 @@ class AssistantActivity : AppCompatActivity() {
     private fun stopRingtone() {
         speak("Ringtone Stopped")
         ringtone.stop()
-    }
-
-    private fun readMe() {
-        CropImage.startPickImageActivity(this)
     }
 
     private fun getTextFromBitmap(bitmap: Bitmap) {
@@ -789,7 +732,7 @@ class AssistantActivity : AppCompatActivity() {
             }
     }
 
-     fun translateEnglishToRussian(text: String):String{
+    private fun translateEnglishToRussian(text: String):String{
          var translateText = ""
         translatePrepare()
         englishRussianTranslator.translate(text)
@@ -804,14 +747,6 @@ class AssistantActivity : AppCompatActivity() {
     }
 
     private fun weather() {
-
-        /*
-        if (keeper.contains("Fahrenheit")) {
-            helper.setUnits(Units.IMPERIAL)
-        } else if (keeper.contains("Celsius")) {
-            helper.setUnits(Units.METRIC)
-        }
-        */
         helper.setUnits(Units.METRIC)
         val keeperSplit = keeper.replace(" ".toRegex(), "|").split("|")
             .toTypedArray()
@@ -849,43 +784,43 @@ class AssistantActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUESTCALL) {
+        if (requestCode == Companion.REQUESTCALL) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 makePhoneCall()
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
-        } else if (requestCode == SENDSMS) {
+        } else if (requestCode == Companion.SENDSMS) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 sendSMS()
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
-        } else if (requestCode == READSMS) {
+        } else if (requestCode == Companion.READSMS) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 readSMS()
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
-        } else if (requestCode == SHAREFILE) {
+        } else if (requestCode == Companion.SHAREFILE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 shareFile()
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
-        } else if (requestCode == SHARETEXTFILE) {
+        } else if (requestCode == Companion.SHARETEXTFILE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 shareTextMessage()
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
-        } else if (requestCode == READCONTACT) {
+        } else if (requestCode == Companion.READCONTACT) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 callContact()
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
             }
-        } else if (requestCode == CAPTUREPHOTO) {
+        } else if (requestCode == Companion.CAPTUREPHOTO) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 capturePhoto()
             } else {
@@ -896,7 +831,7 @@ class AssistantActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode== REQUEST_CODE_SELECT_DOC && resultCode == RESULT_OK) {
+        if(requestCode== Companion.REQUEST_CODE_SELECT_DOC && resultCode == RESULT_OK) {
             val filePath = data?.data?.path
             Log.d("chk", "path: $filePath")
             val file = File(filePath)
@@ -905,7 +840,7 @@ class AssistantActivity : AppCompatActivity() {
             intentShare.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://$file"))
             startActivity(Intent.createChooser(intentShare, "Share the file ..."))
         }
-        if (requestCode == REQUEST_ENABLE_BT){
+        if (requestCode == Companion.REQUEST_ENABLE_BT){
             if(requestCode == RESULT_OK){
                 speak("Bluetooth is on")
             }else{
@@ -1008,9 +943,22 @@ class AssistantActivity : AppCompatActivity() {
         textToSpeech.shutdown()
         speechRecognizer.cancel()
         speechRecognizer.destroy()
-        Log.i(logsr, "destroy")
-        Log.i(logtts, "destroy")
+        Log.i(Companion.logsr, "destroy")
+        Log.i(Companion.logtts, "destroy")
     }
 
-
+    companion object {
+        private const val REQUESTCALL = 1
+        private const val SENDSMS = 2
+        private const val READSMS = 3
+        private const val SHAREFILE = 4
+        private const val SHARETEXTFILE = 5
+        private const val READCONTACT = 6
+        private const val CAPTUREPHOTO = 7
+        private const val REQUEST_CODE_SELECT_DOC = 100
+        private const val REQUEST_ENABLE_BT = 1000
+        private const val logtts = "TTS"
+        private const val logsr = "SR"
+        private const val logkeeper = "keeper"
+    }
 }

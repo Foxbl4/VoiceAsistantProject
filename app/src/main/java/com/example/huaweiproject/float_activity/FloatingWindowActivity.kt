@@ -54,6 +54,7 @@ class FloatingWindowActivity: Service() {
 
         floatView = inflater.inflate(R.layout.floating_layout, null) as ViewGroup
 
+
         btnClose = floatView.findViewById(R.id.window_close)
         btnFloat = floatView.findViewById(R.id.content_button)
 

@@ -20,7 +20,7 @@ import java.io.File
 class MainActivity : AppCompatActivity() {
 
     private lateinit var imageActionButton: ImageButton
-    val recordAudioRequestCode: Int = 1
+    private val recordAudioRequestCode = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,11 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+        grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == recordAudioRequestCode && grantResults.isNotEmpty()){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){

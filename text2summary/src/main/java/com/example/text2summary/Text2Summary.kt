@@ -1,6 +1,8 @@
-package com.ml.quaterion.text2summary
+package com.example.text2summary
 
 import android.os.AsyncTask
+import com.ml.quaterion.text2summary.TFIDFSummarizer
+import com.ml.quaterion.text2summary.Tokenizer
 import java.lang.StringBuilder
 
 // The Text2Summary API for Android.
